@@ -135,8 +135,11 @@
         </li>
         <li class="pl-2">
           Le client vérifie le certificat en le soumettant à des autorités de
-          certificats (Let's Encrypt par exemple). Si le certificat est valide,
-          et émis pour le domaine en question.
+          certificats (Let's Encrypt par exemple).
+          <span class="italic"
+            >Est-ce que le certificat est valide ? Est-ce qu'il est émis pour le
+            domaine en question ?</span
+          >
         </li>
         <li class="pl-2">
           Si le certificat convient, le client génère une clé cryptée pour la
@@ -201,6 +204,22 @@
         </li>
       </ul>
 
+      <div>
+        <figcaption
+          class="w-full flex flex-col items-center text-center text-lg font-semibold mb-4"
+        >
+          <img
+            src="../../assets/acme/ACME.webp"
+            alt="Image illustrant le protocole
+      ACME"
+            class="w-[50%] object-contain rounded-lg shadow-md mt-10"
+          />
+          <small class="mt-1 font-normal"
+            >Image illustrant le protocole ACME</small
+          >
+        </figcaption>
+      </div>
+
       <h2
         class="text-2xl sm:text-3xl font-bold text-blue-600 mb-4 mt-8 border-b border-blue-100 pb-2"
       >
@@ -242,21 +261,6 @@
           >
         </li>
       </ul>
-      <div>
-        <figcaption
-          class="w-full flex flex-col items-center text-center text-lg font-semibold mb-4"
-        >
-          <img
-            src="../../assets/acme/ACME.webp"
-            alt="Image illustrant le protocole
-      ACME"
-            class="w-[50%] object-contain rounded-lg shadow-md mt-10"
-          />
-          <small class="mt-1 font-normal"
-            >Image illustrant le protocole ACME</small
-          >
-        </figcaption>
-      </div>
     </div>
   </body>
 </html>

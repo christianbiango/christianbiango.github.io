@@ -48,7 +48,7 @@ Déjà, clarifions en une phrase la différence entre SSL et TLS :
 
 - Le serveur présente au client son certificat, ainsi que sa clé publique (un peu comme sa carte d'identité).
 
-- Le client vérifie le certificat en le soumettant à des autorités de certificats (Let's Encrypt par exemple). Si le certificat est valide, et émis pour le domaine en question.
+- Le client vérifie le certificat en le soumettant à des autorités de certificats (Let's Encrypt par exemple). `Est-ce que le certificat est valide ?` `Est-ce qu'il est émis pour le domaine en question` ?
 
 - Si le certificat convient, le client génère une clé cryptée pour la session en cours. Il servira de communication lors des échanges avec le serveur (Handshake). Derrière, c'est le protocol cryptographique **Diffie-Hellman** qui assure l'échange de la clé et la confidentialité des données.
 

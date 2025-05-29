@@ -4,9 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Christian - Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+    </style>
   </head>
-  <body>
-    <h1>Hello ! Voici les docs que j'ai écrites :</h1>
-    <a href="docs/acme/acme.html">Protocol ACME, HTTPS et SSL/TLS</a>
+  <body
+    class="bg-gradient-to-br from-blue-50 to-indigo-100 text-gray-800 flex items-center justify-center min-h-screen p-4"
+  >
+    <div
+      class="max-w-xl mx-auto bg-white rounded-lg shadow-xl p-8 text-center border border-blue-200"
+    >
+      <h1 class="text-lg sm:text-xl mb-6 text-gray-500">
+        Hello ! Voici les docs que j'ai écrites :
+      </h1>
+      <a
+        class="underline text-blue-500 hover:text-blue-500"
+        href="docs/acme/acme.html"
+        >Protocol ACME, HTTPS et SSL/TLS</a
+      >
+    </div>
   </body>
 </html>
