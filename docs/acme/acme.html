@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Automatiser sa génération de certificat SSL/TLS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Custom font for better readability */
+      body {
+        font-family: "Inter", sans-serif;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 text-gray-800 p-4 sm:p-8 md:p-12 lg:p-16">
+    <div
+      class="max-w-4xl mx-auto bg-white rounded-lg shadow-xl p-6 sm:p-8 md:p-10"
+    >
+      <h1
+        class="text-3xl sm:text-4xl font-extrabold text-blue-700 mb-6 border-b-2 border-blue-200 pb-3"
+      >
+        Automatiser sa génération de certificat SSL/TLS (Détail sur la sécurité
+        HTTPS)
+      </h1>
+      <p class="mb-6 leading-relaxed text-lg">
+        Si vous êtes habitués à générer vos certificats SSL/TLS manuellement à
+        chaque fois, il faut savoir que le protocol ACME existe ! Cette doc va
+        exposer ses bases, et renverra vers des ressources externes à la fin
+        pour apprendre à en mettre en place.
+      </p>
+
+      <h2
+        class="text-2xl sm:text-3xl font-bold text-blue-600 mb-4 mt-8 border-b border-blue-100 pb-2"
+      >
+        Ça marche comment ?
+      </h2>
+      <p class="mb-4 text-lg">
+        ACME = Automated Certificate Management Environment.
+      </p>
+      <p class="mb-4 leading-relaxed text-lg">
+        L'ACME offre un cadre de travail permettant d'automatiser la gestion de
+        ses certificats SSL/TLS pour un nom de domaine :
+      </p>
+
+      <p class="mb-4 leading-relaxed text-lg">
+        <strong class="font-semibold text-blue-800"
+          >Pour commencer vous avez besoin d'installer un client dans votre
+          projet. Prenons l'exemple de Certbot.</strong
+        >
+      </p>
+      <ul class="list-disc list-inside space-y-2 mb-6 text-lg">
+        <li class="pl-2">
+          Certbot est un outil aidant à installer l'ACME, le configurer et
+          l'automatiser son utilisation par votre serveur.
+        </li>
+        <li class="pl-2">
+          Qui dit certificat dit vérification : Certbot génère les fichiers qui
+          seront vérifiés par l'autorité de certification Let's Encrypt. C'est
+          l'étape CSR (<strong class="font-semibold text-blue-800"
+            >Certificate Signing Request</strong
+          >)
+        </li>
+        <li class="pl-2">
+          Let's Encrypt sera alors en mesure de confirmer que vous êtes le
+          propriétaire du nom de domaine et attribuer au serveur un certificat.
+        </li>
+        <li class="pl-2">
+          Avec l'ACME, le certificat est renouvelé tous les 90 jours !
+        </li>
+        <li class="pl-2">
+          L'ACME peut être mise en place gratuitement selon le client (Oui avec
+          Certbot)
+        </li>
+      </ul>
+
+      <p class="mb-6 leading-relaxed text-lg">
+        <strong class="font-semibold text-blue-800"
+          >L'objectif de l'ACME est donc d'aider à la mise en place d'un serveur
+          HTTPS dont les certificats seront renouvelés automatiquement.</strong
+        >
+      </p>
+
+      <h2
+        class="text-2xl sm:text-3xl font-bold text-blue-600 mb-4 mt-8 border-b border-blue-100 pb-2"
+      >
+        Du coup le SSL/TLS c'est avec ça que ça marche ?
+      </h2>
+      <p class="mb-4 text-lg">Non !</p>
+      <p class="mb-4 leading-relaxed text-lg">
+        L'ACME automatise juste le processus de génération de certificat. Le
+        SSL/TLS vient après : lui, il met en place l'échange de données cryptées
+        qui se produit entre un client et le serveur en HTTPS.
+      </p>
+      <p class="mb-4 leading-relaxed text-lg">
+        Voyons un peu comment le SSL/TLS fonctionne.
+      </p>
+      <p class="mb-4 leading-relaxed text-lg">
+        Déjà, clarifions en une phrase la différence entre SSL et TLS :
+      </p>
+      <p class="mb-4 leading-relaxed text-lg">
+        <strong class="font-semibold text-blue-800"
+          >Dans le langage courant, il n'y en a pas !</strong
+        >
+      </p>
+      <ul class="list-disc list-inside space-y-2 mb-6 text-lg">
+        <li class="pl-2">Lorsqu'on parle de SSL, il s'agit en fait du TLS.</li>
+        <li class="pl-2">
+          En réalité, le SSL et les TLS sont deux protocols différents visant à
+          résoudre la même problématique : renforcer la sécurité au sein des
+          communications réseau.
+        </li>
+        <li class="pl-2">
+          Le TLS est plus robuste, c'est pourquoi le SSL a été largement
+          abandonné. On continue de parler de "SSL" car dans l'usage, l'acronyme
+          est plus parlant.
+        </li>
+      </ul>
+
+      <p class="mb-4 leading-relaxed text-lg">
+        <strong class="font-semibold text-blue-800"
+          >Le fonctionnement de base du TLS :</strong
+        >
+      </p>
+      <p class="mb-4 leading-relaxed text-lg italic">
+        Rappel : HTTPS = HTTP + TLS
+      </p>
+      <ul class="list-disc list-inside space-y-2 mb-6 text-lg">
+        <li class="pl-2">
+          Un client (un navigateur, une API...) interroge un serveur pour
+          consommer ses ressources.
+        </li>
+        <li class="pl-2">
+          Le serveur présente au client son certificat, ainsi que sa clé
+          publique (un peu comme sa carte d'identité).
+        </li>
+        <li class="pl-2">
+          Le client vérifie le certificat en le soumettant à des autorités de
+          certificats (Let's Encrypt par exemple). Si le certificat est valide,
+          et émis pour le domaine en question.
+        </li>
+        <li class="pl-2">
+          Si le certificat convient, le client génère une clé cryptée pour la
+          session en cours. Il servira de communication lors des échanges avec
+          le serveur (Handshake). Derrière, c'est le protocol cryptographique
+          <strong class="font-semibold text-blue-800">Diffie-Hellman</strong>
+          qui assure l'échange de la clé et la confidentialité des données.
+        </li>
+        <li class="pl-2">
+          En HTTPS, les données échangées sont cryptées elles aussi, mais même
+          si elles sont interceptées, si la clé privée ne peut pas être
+          déchiffrée l'information ne pourra pas être récupérée.
+        </li>
+      </ul>
+
+      <p class="mb-4 leading-relaxed text-lg">
+        <strong class="font-semibold text-blue-800"
+          >Qui a créé tout ça ?</strong
+        >
+      </p>
+      <p class="mb-4 leading-relaxed text-lg">
+        On a beaucoup mentionné Let's Encrypt, et c'est justement l'ISRG
+        (<strong class="font-semibold text-blue-800"
+          >Internet Security Research Group</strong
+        >) qui a développé l'ACME pour Let's Encrypt.
+      </p>
+      <p class="mb-4 leading-relaxed text-lg">
+        Plus tard, le protocol a été standardisé par l'IETF (<strong
+          class="font-semibold text-blue-800"
+          >Internet Engineering Task Force</strong
+        >) dans le RFC 8555.
+      </p>
+      <p class="mb-6 leading-relaxed text-lg">
+        L'IETF C'est le principal organisme de normalisation de l'internet.
+      </p>
+      <p class="mb-6 leading-relaxed text-lg">
+        Ils publient des documents comme les RFC (<strong
+          class="font-semibold text-blue-800"
+          >Request For Comment</strong
+        >), qui adressent les spécificités techniques d'internet, comme ses
+        protocols par exemple.
+      </p>
+
+      <h2
+        class="text-2xl sm:text-3xl font-bold text-blue-600 mb-4 mt-8 border-b border-blue-100 pb-2"
+      >
+        Conclusion
+      </h2>
+      <p class="mb-4 leading-relaxed text-lg">3 points clés :</p>
+      <ul class="list-disc list-inside space-y-2 mb-6 text-lg">
+        <li class="pl-2">
+          l'ACME automatise le renouvellement d'un certificat TLS pour un nom de
+          domaine
+        </li>
+        <li class="pl-2">
+          Ensuite, le SSL/TLS peut se produire car le nom de domaine possède un
+          certificat !
+        </li>
+        <li class="pl-2">
+          Il a été créé par des chercheurs puis normalisé des ingénieurs
+          travaillant pour la sécurité et la normalisation d'internet.
+        </li>
+      </ul>
+
+      <h2
+        class="text-2xl sm:text-3xl font-bold text-blue-600 mb-4 mt-8 border-b border-blue-100 pb-2"
+      >
+        Sources sympas
+      </h2>
+      <ul class="list-disc list-inside space-y-2 mb-6 text-lg">
+        <li class="pl-2">
+          <strong class="font-semibold text-blue-800">CertBot</strong> :
+          <a
+            href="https://certbot.eff.org/"
+            target="_blank"
+            class="text-blue-500 hover:underline"
+            >https://certbot.eff.org/</a
+          >
+        </li>
+        <li class="pl-2">
+          <strong class="font-semibold text-blue-800"
+            >Options pour mettre en place l'ACME selon un client au
+            choix</strong
+          >
+          :
+          <a
+            href="https://letsencrypt.org/fr/docs/client-options/"
+            target="_blank"
+            class="text-blue-500 hover:underline"
+            >https://letsencrypt.org/fr/docs/client-options/</a
+          >
+        </li>
+        <li class="pl-2">
+          <strong class="font-semibold text-blue-800"
+            >L'algorithme cryptographique Diffie-Hellman</strong
+          >
+          :
+          <a
+            href="https://medium.com/@antoine.ansel/l-algorithme-d-%C3%A9change-de-cl%C3%A9s-diffie-hellman-6f9681d1418c"
+            target="_blank"
+            class="text-blue-500 hover:underline"
+            >https://medium.com/@antoine.ansel/l-algorithme-d-%C3%A9change-de-cl%C3%A9s-diffie-hellman-6f9681d1418c</a
+          >
+        </li>
+      </ul>
+      <div>
+        <figcaption
+          class="w-full flex flex-col items-center text-center text-lg font-semibold mb-4"
+        >
+          <img
+            src="../../assets/acme/ACME.webp"
+            alt="Image illustrant le protocole
+      ACME"
+            class="w-[50%] object-contain rounded-lg shadow-md mt-10"
+          />
+          <small class="mt-1 font-normal"
+            >Image illustrant le protocole ACME</small
+          >
+        </figcaption>
+      </div>
+    </div>
+  </body>
+</html>
